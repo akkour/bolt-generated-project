@@ -1,0 +1,68 @@
+import { supabase } from '../supabase/client';
+import type { Database } from '../supabase/types';
+
+type Profile = Database['public']['Tables']['profiles']['Row'];
+type ProviderProfile = Database['public']['Tables']['provider_profiles']['Row'];
+
+export const profiles = {
+  /**
+   * Get a user's profile by ID
+   */
+  async getProfile(id: string): Promise<Profile | null> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  /**
+   * Update a user's profile
+   */
+  async updateProfile(id: string, updates: Partial<Profile>) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  /**
+   * Get a provider's complete profile
+   */
+  async getProviderProfile(id: string): Promise<(Profile & ProviderProfile) | null> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(`
+        *,
+        provider_profiles(*)
+      `)
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  /**
+   * Update a provider's profile
+   */
+  async updateProviderProfile(id: string, updates: Partial<ProviderProfile>) {
+    const { data, error } = await supabase
+      .from('provider_profiles')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+}
