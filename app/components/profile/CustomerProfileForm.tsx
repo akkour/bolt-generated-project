@@ -24,6 +24,15 @@ export function CustomerProfileForm({ user, profile }: CustomerProfileFormProps)
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    // Persist form data to session storage
+    sessionStorage.setItem("firstName", firstName);
+    sessionStorage.setItem("lastName", lastName);
+    sessionStorage.setItem("phone", phone);
+    sessionStorage.setItem("address", address);
+    sessionStorage.setItem("city", city);
+    sessionStorage.setItem("state", state);
+    sessionStorage.setItem("zipCode", zipCode);
+
     try {
       const updates = {
         id: user?.id,
@@ -46,6 +55,8 @@ export function CustomerProfileForm({ user, profile }: CustomerProfileFormProps)
       }
 
       alert("Profile updated successfully!");
+      sessionStorage.clear(); // Clear session storage after successful update
+      window.location.reload(); // Refresh the dashboard
     } catch (error) {
       console.error("Profile update error:", error);
       alert("Failed to update profile.");
@@ -53,7 +64,7 @@ export function CustomerProfileForm({ user, profile }: CustomerProfileFormProps)
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" id="updateProfileForm">
       <div>
         <label
           htmlFor="firstName"
@@ -184,6 +195,7 @@ export function CustomerProfileForm({ user, profile }: CustomerProfileFormProps)
         <button
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          id="updateProfileButton"
         >
           Update Profile
         </button>

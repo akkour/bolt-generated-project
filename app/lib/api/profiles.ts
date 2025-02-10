@@ -37,7 +37,7 @@ export const profiles = {
   /**
    * Get a provider's complete profile
    */
-  async getProviderProfile(id: string): Promise<(Profile & ProviderProfile) | null> {
+  async getProviderProfile(id: string): Promise<(Profile & { provider_profiles: ProviderProfile | null }) | null> {
     const { data, error } = await supabase
       .from('profiles')
       .select(`
@@ -55,14 +55,18 @@ export const profiles = {
    * Update a provider's profile
    */
   async updateProviderProfile(id: string, updates: Partial<ProviderProfile>) {
+    console.log("updateProviderProfile updates:", updates); // Log updates in updateProviderProfile
     const { data, error } = await supabase
       .from('provider_profiles')
       .update(updates)
-      .eq('id', id)
+      .eq('id', id) // Changed back to 'id'
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Error updating provider profile:", error); // Log Supabase error
+      throw error;
+    }
     return data;
   },
 }

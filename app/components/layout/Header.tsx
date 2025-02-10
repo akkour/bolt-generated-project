@@ -9,15 +9,23 @@ export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
+  console.log("Header.tsx: Rendering - Header component rendering"); // Log component rendering
+
   useEffect(() => {
+    console.log("Header.tsx: useEffect - useEffect hook triggered"); // Log useEffect trigger
     const fetchProfile = async () => {
+      console.log("Header.tsx: useEffect - Fetching profile..."); // Log profile fetch start
       const { user, profile } = await auth.getCurrentProfile();
+      console.log("Header.tsx: useEffect - Profile data fetched:", { user, profile }); // Log profile data
       setUser(user);
       setProfile(profile);
+      console.log("Header.tsx: useEffect - State updated - user:", user, "profile:", profile); // Log state update
     };
 
     fetchProfile();
   }, []);
+
+  console.log("Header.tsx: Rendering - User:", user, "Profile:", profile); // Log user and profile before render
 
   const handleSignOut = async () => {
     await auth.signOut();
@@ -43,7 +51,7 @@ export default function Header() {
                 aria-label="User menu"
               >
                 <span className="rounded-full h-8 w-8 bg-gray-200 flex items-center justify-center">
-                  {profile?.firstName ? profile?.firstName[0].toUpperCase() : user?.email[0].toUpperCase()}
+                  {profile?.firstName ? profile?.firstName[0].toUpperCase() : user?.email ? user?.email[0].toUpperCase() : "?"}
                 </span>
               </button>
 

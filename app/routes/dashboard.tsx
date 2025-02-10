@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   useLoaderData,
   redirect,
@@ -6,12 +6,10 @@ import {
 } from "@remix-run/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { auth } from "~/lib/api/auth";
-import { supabase } from "~/lib/supabase/client";
 import type { Database } from "~/lib/supabase/types";
 import { CustomerDashboard } from "~/components/dashboard/CustomerDashboard";
 import { ProviderDashboard } from "~/components/dashboard/ProviderDashboard";
-import { CustomerProfileForm } from "~/components/profile/CustomerProfileForm";
-import { ProviderProfileForm } from "~/components/profile/ProviderProfileForm";
+import { AdminDashboard } from "~/components/dashboard/AdminDashboard";
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -49,6 +47,8 @@ export default function Dashboard() {
 
   const renderDashboard = () => {
     switch (profile?.role) {
+      case "admin":
+        return <AdminDashboard user={user} profile={profile} />;
       case "customer":
         return <CustomerDashboard user={user} profile={profile} />;
       case "provider":
@@ -58,36 +58,13 @@ export default function Dashboard() {
     }
   };
 
-  const renderProfileForm = () => {
-    switch (profile?.role) {
-      case "customer":
-        return <CustomerProfileForm user={user} profile={profile} />;
-      case "provider":
-        return <ProviderProfileForm user={user} profile={profile} />;
-      default:
-        return <div>Unknown role</div>;
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 py-6 flex flex-col justify-center sm:py-12">
-      <div className="relative py-3 sm:max-w-xl sm:mx-auto">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-600 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
-        <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
-          <div className="max-w-md mx-auto">
-            <div>
-              <h1 className="text-2xl font-semibold">
-                Welcome to your Dashboard, {user.email}
-              </h1>
-            </div>
-            <div className="divide-y divide-gray-200">
-              <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                {renderDashboard()}
-                {renderProfileForm()}
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="container-custom min-h-screen bg-gray-100 py-10">
+      <div className="mx-auto">
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-900">
+          Welcome to your Dashboard, {user.email}
+        </h1>
+        {renderDashboard()}
       </div>
     </div>
   );
