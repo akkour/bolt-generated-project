@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import type { Database } from '~/lib/supabase/types';
+import { UserManagement } from './UserManagement'; // Import UserManagement
+import { ServiceCategoryManagement } from './ServiceCategoryManagement'; // Import ServiceCategoryManagement
+import { SystemAnalytics } from './SystemAnalytics'; // Import SystemAnalytics
+
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 interface AdminDashboardProps {
@@ -9,6 +13,10 @@ interface AdminDashboardProps {
 }
 
 export function AdminDashboard({ user, profile }: AdminDashboardProps) {
+  const [userManagementExpanded, setUserManagementExpanded] = useState(false);
+  const [serviceCategoriesExpanded, setServiceCategoriesExpanded] = useState(false);
+  const [systemAnalyticsExpanded, setSystemAnalyticsExpanded] = useState(false);
+
   return (
     <div className="bg-white shadow rounded-lg p-6">
       <div className="flex items-center justify-between mb-6">
@@ -19,30 +27,57 @@ export function AdminDashboard({ user, profile }: AdminDashboardProps) {
       </div>
 
       <section className="mb-8">
-        <h3 className="text-xl font-semibold mb-3 text-gray-700">User Management</h3>
-        <p className="text-gray-600">Manage user accounts and roles.</p>
-        {/* Add user management component here */}
-        <div className="mt-4 p-4 border rounded-md bg-gray-50">
-          [User Management Placeholder]
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-xl font-semibold text-gray-700">User Management</h3>
+          <button
+            onClick={() => setUserManagementExpanded(!userManagementExpanded)}
+            className="text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
+          >
+            {userManagementExpanded ? 'Collapse' : 'Expand'}
+          </button>
         </div>
+        <p className="text-gray-600">Manage user accounts and roles.</p>
+        {userManagementExpanded && (
+          <div className="mt-4 p-4 border rounded-md bg-gray-50">
+            <UserManagement /> {/* Render UserManagement Component */}
+          </div>
+        )}
       </section>
 
       <section className="mb-8">
-        <h3 className="text-xl font-semibold mb-3 text-gray-700">Service Categories</h3>
-        <p className="text-gray-600">Manage service categories offered on the platform.</p>
-        {/* Add service categories component here */}
-        <div className="mt-4 p-4 border rounded-md bg-gray-50">
-          [Service Categories Placeholder]
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-xl font-semibold text-gray-700">Service Categories</h3>
+          <button
+            onClick={() => setServiceCategoriesExpanded(!serviceCategoriesExpanded)}
+            className="text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
+          >
+            {serviceCategoriesExpanded ? 'Collapse' : 'Expand'}
+          </button>
         </div>
+        <p className="text-gray-600">Manage service categories offered on the platform.</p>
+        {serviceCategoriesExpanded && (
+          <div className="mt-4 p-4 border rounded-md bg-gray-50">
+            <ServiceCategoryManagement /> {/* Render ServiceCategoryManagement Component */}
+          </div>
+        )}
       </section>
 
       <section>
-        <h3 className="text-xl font-semibold mb-3 text-gray-700">System Analytics</h3>
-        <p className="text-gray-600">View platform usage and performance analytics.</p>
-        {/* Add analytics component here */}
-        <div className="mt-4 p-4 border rounded-md bg-gray-50">
-          [System Analytics Placeholder]
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-xl font-semibold text-gray-700">System Analytics</h3>
+          <button
+            onClick={() => setSystemAnalyticsExpanded(!systemAnalyticsExpanded)}
+            className="text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
+          >
+            {systemAnalyticsExpanded ? 'Collapse' : 'Expand'}
+          </button>
         </div>
+        <p className="text-gray-600">View platform usage and performance analytics.</p>
+        {systemAnalyticsExpanded && (
+          <div className="mt-4 p-4 border rounded-md bg-gray-50">
+            <SystemAnalytics /> {/* Render SystemAnalytics Component */}
+          </div>
+        )}
       </section>
     </div>
   );

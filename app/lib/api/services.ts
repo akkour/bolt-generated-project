@@ -28,7 +28,10 @@ export const services = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("services.ts:createRequest - Supabase error:", error);
+      throw error;
+    }
     return data;
   },
 
@@ -36,20 +39,28 @@ export const services = {
    * Get service requests for a client
    */
   async getClientRequests(clientId: string) {
+    console.log("services.ts:getClientRequests -  Fetching service requests for client ID:", clientId);
     const { data, error } = await supabase
       .from('service_requests')
       .select(`
-        *,
-        provider_profiles (
-          *,
-          profiles (*)
-        ),
-        service_categories (*)
+        id,
+        title,
+        description,
+        status,
+        created_at,
+        service_categories (
+          name,
+          icon_url
+        )
       `)
       .eq('client_id', clientId)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      console.error("services.ts:getClientRequests -  Error fetching service requests:", error);
+      throw error;
+    }
+    console.log("services.ts:getClientRequests -  Successfully fetched service requests:", data);
     return data;
   },
 

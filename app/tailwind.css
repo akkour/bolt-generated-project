@@ -7,7 +7,7 @@
     --color-primary: #2563eb;
     --color-secondary: #475569;
   }
-  
+
   body {
     @apply text-gray-800 bg-gray-50;
   }
@@ -23,7 +23,7 @@
   }
 
   .btn-primary {
-    @apply bg-blue-600 text-white hover:bg-blue-700;
+    @apply bg-primary-600 text-white hover:bg-primary-700; /* Use primary color from theme */
   }
 
   .btn-secondary {
@@ -36,6 +36,18 @@
 
   .logo-text {
     @apply font-bold tracking-tight;
+  }
+
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .header-nav-link { /* Reusable header nav link style */
+    @apply text-gray-700 hover:text-primary-600 transition-colors duration-200; /* Gray text, primary hover */
+  }
+
+  .footer-link { /* Reusable footer link style */
+    @apply text-gray-600 hover:text-gray-800 transition-colors duration-200; /* Lighter gray text, darker gray hover */
   }
 }
 

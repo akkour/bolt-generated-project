@@ -22,26 +22,41 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunctionArgs = async ({ request }) => {
+  console.log("dashboard.tsx: loader - Dashboard loader started");
   const { user, profile, error } = await auth.getCurrentProfile();
+  console.log("dashboard.tsx: loader - auth.getCurrentProfile result:", { user, profile, error });
+
+  if (error) {
+    console.error("dashboard.tsx: loader - Error from getCurrentProfile:", error);
+  }
 
   if (!user) {
+    console.log("dashboard.tsx: loader - No user found in getCurrentProfile, redirecting to /login");
     return redirect("/login");
   }
 
+  console.log("dashboard.tsx: loader - User found:", user);
+  console.log("dashboard.tsx: loader - Profile:", profile);
   return { user: { id: user.id, email: user.email }, profile };
 };
 
 export default function Dashboard() {
   const { user, profile } = useLoaderData<typeof loader>();
+  console.log("dashboard.tsx:Dashboard - Dashboard component rendering, user:", user, "profile:", profile); // Add log in Dashboard component
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("dashboard.tsx: useEffect - useEffect hook in Dashboard component");
     if (!user) {
+      console.log("dashboard.tsx: useEffect - No user, navigating to /login");
       navigate("/login");
+    } else {
+      console.log("dashboard.tsx: useEffect - User exists, dashboard rendering");
     }
   }, [user, navigate]);
 
   if (!user) {
+    console.log("dashboard.tsx: Component - No user, returning null");
     return null;
   }
 
@@ -58,6 +73,7 @@ export default function Dashboard() {
     }
   };
 
+  console.log("dashboard.tsx: Component - Rendering Dashboard for role:", profile?.role);
   return (
     <div className="container-custom min-h-screen bg-gray-100 py-10">
       <div className="mx-auto">

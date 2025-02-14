@@ -8,30 +8,45 @@ import {
 } from "@remix-run/react";
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
 import { auth } from "~/lib/api/auth";
+import { commitSession, getSession, sessionStorage } from "~/lib/session.server";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Login - PennFix" }];
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  console.log("login.tsx: action -  Login action started"); // Log action start
+  console.log("login.tsx: action -  Login action started");
   const formData = await request.formData();
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  console.log("login.tsx: action -  Email:", email); // Log email
-  console.log("login.tsx: action - Password (not logged for security)"); // Log password intent
+  console.log("login.tsx: action -  Email:", email);
+  console.log("login.tsx: action - Password (not logged for security)");
 
   try {
+    console.log("login.tsx: action - Calling auth.signIn...");
     const { user } = await auth.signIn(email, password);
+    console.log("login.tsx: action - auth.signIn returned:", user);
+
     if (!user) {
-      console.log("login.tsx: action - Login failed: Invalid credentials"); // Log login failure
+      console.log("login.tsx: action - Login failed: Invalid credentials");
       return { success: false, error: "Login failed. Please check your credentials." };
     }
 
-    console.log("login.tsx: action - Login successful, user ID:", user.id); // Log successful login and user ID
-    console.log("login.tsx: action - Redirecting to /dashboard"); // Log redirection intent
-    return redirect("/dashboard");
+    // Session management
+    console.log("login.tsx: action - Getting session...");
+    const session = await getSession(request.headers.get("Cookie"));
+    console.log("login.tsx: action - Session retrieved:", session);
+    session.set('userId', user.id); // Store user ID in session
+    console.log("login.tsx: action - User ID set in session:", user.id);
+
+    console.log("login.tsx: action - Login successful, user ID:", user.id);
+    console.log("login.tsx: action - Redirecting to /dashboard");
+    return redirect("/dashboard", {
+      headers: {
+        "Set-Cookie": await commitSession(session), // Commit session to cookie
+      },
+    });
 
 
   } catch (error) {
